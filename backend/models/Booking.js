@@ -1,35 +1,51 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const bookingSchema = new mongoose.Schema(
-   {
-      userId: {
-         type: String
+const Booking = sequelize.define(
+  "Booking",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
       },
-      userEmail: {
-         type: String
-      },
-      tourName: {
-         type: String,
-         required: true,
-      },
-      fullName: {
-         type: String,
-         required: true,
-      },
-      guestSize: {
-         type: Number,
-         required: true
-      },
-      phone: {
-         type: Number,
-         required: true
-      },
-      bookAt: {
-         type: Date,
-         required: true
-      },
-   },
-   { timestamps: true }
+    },
+    userEmail: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    tourName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    fullName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    guestSize: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    bookAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: true,
+    tableName: "bookings",
+  }
 );
 
-export default mongoose.model("Booking", bookingSchema);
+export default Booking;
