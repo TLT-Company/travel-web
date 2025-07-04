@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
-const User = sequelize.define(
-  "User",
+const Employer = sequelize.define(
+  "Employer",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,33 +10,25 @@ const User = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
-      },
-    },
-    password_hash: {
-      type: DataTypes.STRING,
+    user_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    role: {
+    full_name: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isIn: [["admin", "employer", "customer"]],
-      },
+    },
+    position: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
-    tableName: "users",
+    tableName: "employers",
     timestamps: true,
     createdAt: "created_at",
-    updatedAt: "updated_at",
-    comment: "Tài khoản người dùng",
+    updatedAt: false,
   }
 );
 
-export default User;
+export default Employer;

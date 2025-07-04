@@ -1,0 +1,85 @@
+Project WebBookingTour {
+  database_type: "PostgreSQL"
+  Note: "Database thiết kế cho hệ thống booking tour"
+}
+
+Table users {
+  id             uuid [pk, unique, not null]
+  email          varchar [not null, unique]
+  password_hash  varchar [not null]
+  role           varchar [note: 'admin | employer | customer']
+  created_atå     timestamp
+  updated_at     timestamp
+
+  Note: "Tài khoản người dùng"
+}
+
+Table customers {
+  id               uuid [pk, unique, not null]
+  user_id          uuid [ref: > users.id, not null]
+  document_number  varchar                         // Số công văn
+  card_id          varchar                         // Số CCCD
+  card_created_at  date                            // Ngày cấp CCCD
+  full_name        varchar                         // Họ tên đầy đủ
+  day_of_birth     date                            // Ngày sinh
+  gender           varchar [note: 'Nam | Nữ | Khác']
+  national         varchar(50)                     // Quốc tịch
+  address          varchar(255)                    // Địa chỉ thường trú
+  village          varchar(100)                    // Thôn/Xóm
+  province         varchar(100)                    // Tỉnh/Thành phố
+  district         varchar(100)                    // Quận/Huyện
+  commune          varchar(100)                    // Xã/Phường
+  place_of_birth   varchar(100)                    // Nơi sinh
+  province_code    varchar(10)                     // Mã tỉnh
+  district_code    varchar(10)                     // Mã huyện
+  commune_code     varchar(10)                     // Mã xã
+  phone_number     varchar                         // Số điện thoại
+  id_card_number   varchar                         // Mã CCCD cũ nếu có
+  id_card_front    varchar [note: 'Path ảnh CCCD mặt trước']
+  id_card_back     varchar [note: 'Path ảnh CCCD mặt sau']
+  picture          varchar [note: 'Path ảnh chân dung']
+  verified_status  varchar [note: 'pending | verified | rejected']
+  created_at       timestamp
+  updated_at       timestamp
+}
+
+
+Table employers {
+  id         uuid [pk, unique, not null]
+  user_id    uuid [ref: > users.id, not null]
+  full_name  varchar
+  position   varchar
+  created_at timestamp
+}
+
+Table tours {
+  id          uuid [pk, unique, not null]
+  name        varchar
+  description text
+  price       decimal
+  start_date  date
+  end_date    date
+  location    varchar
+  created_by  uuid [ref: > users.id, not null]
+  created_at  timestamp
+
+  Note: "Tour được tạo bởi admin"
+}
+
+Table bookings {
+  id           uuid [pk, unique, not null]
+  customer_id  uuid [ref: > customers.id, not null]
+  tour_id      uuid [ref: > tours.id, not null]
+  booking_date timestamp
+  status       varchar [note: 'pending | confirmed | cancelled']
+  assigned_to  uuid [ref: > employers.id]
+  note         text
+}
+
+Table task_assignments {
+  id           uuid [pk, unique, not null]
+  employer_id  uuid [ref: > employers.id, not null]
+  booking_id   uuid [ref: > bookings.id, not null]
+  assigned_at  timestamp
+  status       varchar [note: 'new | in_progress | completed']
+}

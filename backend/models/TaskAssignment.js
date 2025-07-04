@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
-const Booking = sequelize.define(
-  "Booking",
+const TaskAssignment = sequelize.define(
+  "TaskAssignment",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,15 +10,15 @@ const Booking = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    customer_id: {
+    employer_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    tour_id: {
+    booking_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    booking_date: {
+    assigned_at: {
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -26,23 +26,15 @@ const Booking = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isIn: [["pending", "confirmed", "cancelled"]],
+        isIn: [["new", "in_progress", "completed"]],
       },
-      comment: "pending | confirmed | cancelled",
-    },
-    assigned_to: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    note: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      comment: "new | in_progress | completed",
     },
   },
   {
-    tableName: "bookings",
+    tableName: "task_assignments",
     timestamps: false,
   }
 );
 
-export default Booking;
+export default TaskAssignment;

@@ -8,48 +8,43 @@ const Tour = sequelize.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      allowNull: false,
     },
-    title: {
+    name: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
     },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    distance: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    photo: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    desc: {
+    description: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    start_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    end_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    created_by: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    maxGroupSize: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    featured: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
   },
   {
-    timestamps: true,
     tableName: "tours",
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: false,
+    comment: "Tour được tạo bởi admin",
   }
 );
 
