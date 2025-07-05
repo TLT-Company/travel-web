@@ -6,6 +6,7 @@ import {
   updateDocumentExportHistory,
   deleteDocumentExportHistory,
   getDocumentExportHistoriesByStatus,
+  performAnalysisFile,
 } from "../Controllers/documentExportController.js";
 
 const router = express.Router();
@@ -16,11 +17,11 @@ router.get("/", getAllDocumentExportHistories);
 // Get document export histories by status
 router.get("/status/:status", getDocumentExportHistoriesByStatus);
 
-// Get document export history by ID
-router.get("/:id", getDocumentExportHistoryById);
-
 // Create new document export history
 router.post("/", createDocumentExportHistory);
+
+// Perform analysis file
+router.post("/perform-analysis", performAnalysisFile);
 
 // Update document export history
 router.put("/:id", updateDocumentExportHistory);
