@@ -174,7 +174,7 @@ export const getDocumentExportHistoriesByStatus = async (req, res) => {
 
 // Perform analysis file - Main function
 export const performAnalysisFile = async (req, res) => {
-  let documentExportTxt = null;
+  // let documentExportTxt = null;
   let documentExportDeclaration = null;
   let documentExportGroupVN = null;
   let documentExportGroupCN = null;
@@ -192,11 +192,11 @@ export const performAnalysisFile = async (req, res) => {
     console.log("Name file", fileName);
 
     // Create document export history records
-    documentExportTxt = await DocumentExportHistory.create({
-      kind: "encryptedList",
-      file_name: fileName,
-      status: "processing",
-    });
+    // documentExportTxt = await DocumentExportHistory.create({
+    //   kind: "encryptedList",
+    //   file_name: fileName,
+    //   status: "processing",
+    // });
     documentExportDeclaration = await DocumentExportHistory.create({
       kind: "declarationList",
       file_name: fileName,
@@ -220,7 +220,7 @@ export const performAnalysisFile = async (req, res) => {
     const groupCNFilePath = `./public/export/group_list_cn/${fileName}_danh_sach_cn.xlsx`;
 
     // Update file paths in database
-    documentExportTxt.file_path = txtFilePath;
+    // documentExportTxt.file_path = txtFilePath;
     documentExportDeclaration.file_path = declarationListFilePath;
     documentExportGroupVN.file_path = groupVNFilePath;
     documentExportGroupCN.file_path = groupCNFilePath;
@@ -281,8 +281,8 @@ export const performAnalysisFile = async (req, res) => {
     await exportGroupCN(usersInfo2, fileName);
 
     // Update status to success
-    documentExportTxt.status = "success";
-    await documentExportTxt.save();
+    // documentExportTxt.status = "success";
+    // await documentExportTxt.save();
 
     await archive.finalize();
     documentExportDeclaration.status = "success";
@@ -299,10 +299,10 @@ export const performAnalysisFile = async (req, res) => {
       .json({ success: true, message: "Trích xuất thông tin thành công!" });
   } catch (error) {
     // Update status to failed for all records
-    if (documentExportTxt) {
-      documentExportTxt.status = "failed";
-      await documentExportTxt.save();
-    }
+    // if (documentExportTxt) {
+    //   documentExportTxt.status = "failed";
+    //   await documentExportTxt.save();
+    // }
     if (documentExportDeclaration) {
       documentExportDeclaration.status = "failed";
       await documentExportDeclaration.save();
@@ -557,3 +557,85 @@ async function exportGroupVN(users, fileName) {
   const outputPath = `./public/export/group_list_vn/${fileName}_danh_sach_vn.xlsx`;
   await workbook.xlsx.writeFile(outputPath);
 }
+
+// Download file by ID
+export const downloadFileById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the document export history by ID
+    const history = await DocumentExportHistory.findByPk(id);
+
+    if (!history) {
+      return res.status(404).json({
+        success: false,
+        message: "Document export history not found",
+      });
+    }
+
+    // Check if file exists
+    if (!history.file_path || !fs.existsSync(history.file_path)) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found on server",
+      });
+    }
+
+    // Check if the export was successful
+    if (history.status !== "success") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "File export was not successful. Current status: " + history.status,
+      });
+    }
+
+    // Get file stats
+    const stats = fs.statSync(history.file_path);
+
+    // Get file extension from file_path
+    const fileExtension = path.extname(history.file_path);
+    const fileName = history.file_name
+      ? `${history.file_name}${fileExtension}`
+      : path.basename(history.file_path);
+
+    // Set appropriate Content-Type based on file extension
+    let contentType = "application/octet-stream";
+    if (fileExtension === ".xlsx") {
+      contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    } else if (fileExtension === ".zip") {
+      contentType = "application/zip";
+    } else if (fileExtension === ".txt") {
+      contentType = "text/plain";
+    }
+
+    // Set headers for file download
+    res.setHeader("Content-Length", stats.size);
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+
+    // Create read stream and pipe to response
+    const fileStream = fs.createReadStream(history.file_path);
+    fileStream.pipe(res);
+
+    // Handle stream errors
+    fileStream.on("error", (error) => {
+      console.error("File stream error:", error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: "Error reading file",
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Download file by ID error:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to download file",
+      });
+    }
+  }
+};
