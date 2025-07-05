@@ -21,6 +21,8 @@ async function resetAndMigrate() {
       "employers",
       "customers",
       "users",
+      "document_customer",
+      "document_export_histories",
     ];
 
     console.log("🗑️ Dropping existing tables...");

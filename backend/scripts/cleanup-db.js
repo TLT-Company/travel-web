@@ -14,6 +14,8 @@ async function cleanupDatabase() {
       "employers",
       "customers",
       "users",
+      "document_customer",
+      "document_export_histories",
     ];
 
     console.log("🗑️ Dropping all tables...");

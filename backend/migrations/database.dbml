@@ -17,7 +17,6 @@ Table users {
 Table customers {
   id               id [pk, unique, not null]
   user_id          id [ref: > users.id, not null]
-  document_number  varchar                         // Số công văn
   card_id          varchar                         // Số CCCD
   card_created_at  date                            // Ngày cấp CCCD
   full_name        varchar                         // Họ tên đầy đủ
@@ -83,6 +82,20 @@ Table task_assignments {
   assigned_at  timestamp
   status       varchar [note: 'new | in_progress | completed']
 }
+
+Table document_customer {
+  document_number  varchar(255) [not null]          // Số công văn
+  customer_id      id [ref: > customers.id, not null]  // Liên kết tới khách hàng
+  created_at       datetime
+  updated_at       datetime
+
+  Note: 'Bảng liên kết giữa công văn và khách hàng'
+
+  Indexes {
+    (document_number, customer_id) [pk, unique]
+  }
+}
+
 
 Table document_export_histories {
   id          id [pk, unique, not null]

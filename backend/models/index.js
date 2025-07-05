@@ -5,6 +5,7 @@ import Tour from "./Tour.js";
 import Booking from "./Booking.js";
 import TaskAssignment from "./TaskAssignment.js";
 import DocumentExportHistory from "./DocumentExportHistory.js";
+import DocumentCustomer from "./DocumentCustomer.js";
 
 // User relationships
 User.hasOne(Customer, { foreignKey: "user_id", as: "customer" });
@@ -50,6 +51,16 @@ Booking.hasMany(TaskAssignment, {
 });
 TaskAssignment.belongsTo(Booking, { foreignKey: "booking_id", as: "booking" });
 
+// DocumentCustomer relationships
+Customer.hasMany(DocumentCustomer, {
+  foreignKey: "customer_id",
+  as: "documentCustomers",
+});
+DocumentCustomer.belongsTo(Customer, {
+  foreignKey: "customer_id",
+  as: "customer",
+});
+
 export {
   User,
   Customer,
@@ -58,4 +69,5 @@ export {
   Booking,
   TaskAssignment,
   DocumentExportHistory,
+  DocumentCustomer,
 };

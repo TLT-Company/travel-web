@@ -6,9 +6,8 @@ export const up = async () => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      unique: true,
+      autoIncrement: true,
       allowNull: false,
-      defaultValue: DataTypes.INTEGER,
     },
     kind: {
       type: DataTypes.STRING(255),
