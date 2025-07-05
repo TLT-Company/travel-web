@@ -14,11 +14,6 @@ const Customer = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    document_number: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      comment: "Số công văn",
-    },
     card_id: {
       type: DataTypes.STRING,
       allowNull: true,

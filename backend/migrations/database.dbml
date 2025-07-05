@@ -4,7 +4,7 @@ Project WebBookingTour {
 }
 
 Table users {
-  id             uuid [pk, unique, not null]
+  id             id [pk, unique, not null]
   email          varchar [not null, unique]
   password_hash  varchar [not null]
   role           varchar [note: 'admin | employer | customer']
@@ -15,9 +15,8 @@ Table users {
 }
 
 Table customers {
-  id               uuid [pk, unique, not null]
-  user_id          uuid [ref: > users.id, not null]
-  document_number  varchar                         // Số công văn
+  id               id [pk, unique, not null]
+  user_id          id [ref: > users.id, not null]
   card_id          varchar                         // Số CCCD
   card_created_at  date                            // Ngày cấp CCCD
   full_name        varchar                         // Họ tên đầy đủ
@@ -45,41 +44,65 @@ Table customers {
 
 
 Table employers {
-  id         uuid [pk, unique, not null]
-  user_id    uuid [ref: > users.id, not null]
+  id         id [pk, unique, not null]
+  user_id    id [ref: > users.id, not null]
   full_name  varchar
   position   varchar
   created_at timestamp
 }
 
 Table tours {
-  id          uuid [pk, unique, not null]
+  id          id [pk, unique, not null]
   name        varchar
   description text
   price       decimal
   start_date  date
   end_date    date
   location    varchar
-  created_by  uuid [ref: > users.id, not null]
+  created_by  id [ref: > users.id, not null]
   created_at  timestamp
 
   Note: "Tour được tạo bởi admin"
 }
 
 Table bookings {
-  id           uuid [pk, unique, not null]
-  customer_id  uuid [ref: > customers.id, not null]
-  tour_id      uuid [ref: > tours.id, not null]
+  id           id [pk, unique, not null]
+  customer_id  id [ref: > customers.id, not null]
+  tour_id      id [ref: > tours.id, not null]
   booking_date timestamp
   status       varchar [note: 'pending | confirmed | cancelled']
-  assigned_to  uuid [ref: > employers.id]
+  assigned_to  id [ref: > employers.id]
   note         text
 }
 
 Table task_assignments {
-  id           uuid [pk, unique, not null]
-  employer_id  uuid [ref: > employers.id, not null]
-  booking_id   uuid [ref: > bookings.id, not null]
+  id           id [pk, unique, not null]
+  employer_id  id [ref: > employers.id, not null]
+  booking_id   id [ref: > bookings.id, not null]
   assigned_at  timestamp
   status       varchar [note: 'new | in_progress | completed']
+}
+
+Table document_customer {
+  document_number  varchar(255) [not null]          // Số công văn
+  customer_id      id [ref: > customers.id, not null]  // Liên kết tới khách hàng
+  created_at       datetime
+  updated_at       datetime
+
+  Note: 'Bảng liên kết giữa công văn và khách hàng'
+
+  Indexes {
+    (document_number, customer_id) [pk, unique]
+  }
+}
+
+
+Table document_export_histories {
+  id          id [pk, unique, not null]
+  kind        varchar(255)         // Loại tài liệu export
+  file_path   varchar(255)         // Đường dẫn file
+  file_name   varchar(255)         // Tên file
+  status      varchar(255)         // Trạng thái (success, failed, etc.)
+  created_at  datetime
+  updated_at  datetime
 }

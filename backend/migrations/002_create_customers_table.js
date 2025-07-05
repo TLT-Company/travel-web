@@ -16,11 +16,6 @@ export async function up(queryInterface, Sequelize) {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    document_number: {
-      type: Sequelize.STRING,
-      allowNull: true,
-      comment: "Số công văn",
-    },
     card_id: {
       type: Sequelize.STRING,
       allowNull: true,
